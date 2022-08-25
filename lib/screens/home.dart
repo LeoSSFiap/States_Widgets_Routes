@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/foundation/key.dart';
+import 'package:states_widgets_routes/models/language.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -10,7 +11,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   
-  List<bool> selects = [false, false, false, false, false, false];
+  List<Language> languages = [
+    Language("Android Nativo!", "Linguagens C, Java, Kotlin"),
+    Language("IOS Nativo", "Linguaguens Object-c Swift"),
+    Language("Flutter", "Linguagem DART"),
+    Language("React Native", "Linguagens TypeScript e JavaScript"),    
+  ];
   
 Widget title = const Text("Minhas Linguagens");
 
@@ -22,17 +28,7 @@ Widget title = const Text("Minhas Linguagens");
         children: [
           Wrap(
             spacing: 10,
-            children: [
-              ChoiceChip(
-                label: const Text("Android Nativo"),
-                selected: selects[0],
-                onSelected: (value){
-                  setState(() {
-                    selects[0] = value;
-                  });
-                },
-              ),
-            ],
+            children: buildChoices(),
           ),
           Expanded(child: ListView(children: buildItemsList(),))
         ],
@@ -40,16 +36,26 @@ Widget title = const Text("Minhas Linguagens");
     );
   }
 
+List<Widget> buildChoices(){
+  return languages.map((l) => ChoiceChip(
+    label: Text(l.title), 
+    selected: l.select,
+    onSelected: (value) => setState(() {
+      l.select = value;
+    })
+  )).toList();
+}
+
   List<Widget> buildItemsList(){
-    return [
-      if(selects[0]) Card(
+    return languages
+      .where((l) => l.select)
+      .map((l) => Card(
         child: ListTile(
-          leading: Icon(Icons.android),
-          title: Text("Android Nativo"),
-          subtitle: Text("Linguagens C, Java, Kotlin"),
+          leading: Icon(l.icone),
+          title: Text(l.title),
+          subtitle: Text(l.subTitle),
         ),
-      )
-    ];
+      )).toList();
   }
 
 }
